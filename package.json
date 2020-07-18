@@ -1,0 +1,32 @@
+{
+  "name": "imagekit-uppy-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist*;parcel build static/index.js --out-file bundle.js",
+    "start": "parcel ./client/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@uppy/companion": "^2.0.0-alpha.7",
+    "@uppy/core": "^1.12.0",
+    "@uppy/dashboard": "^1.10.2",
+    "@uppy/dropbox": "^1.4.9",
+    "@uppy/facebook": "^1.1.9",
+    "@uppy/google-drive": "^1.5.9",
+    "@uppy/url": "^1.5.8",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "imagekit": "^3.0.5",
+    "imagekit-uppy-plugin": "1.0.0-beta.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "parcel": "^1.12.4"
+  }
+}
