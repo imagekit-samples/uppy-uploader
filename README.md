@@ -37,7 +37,7 @@ Open [client/vanillajs/index.js](client/vanillajs/index.js) and set your ImageKi
 node server/index.js
 ```
 
-Open [http:localhost:3020](http:localhost:3020) in your browser.
+Open [http://localhost:3020](http://localhost:3020) in your browser.
 
 
 # How to use DropBox, Facebook and Drive upload options
@@ -46,7 +46,7 @@ Uppy allows users to fetch files from local disk, remote URLs, Google Drive, Dro
 All you have to do is:
 1. Specify the `key` and `secret` for your applications in `.env` file. We created this file during the setup. For more information regarding how to create a third party application and set up redirect URLs, checkout [Uppy docs](https://uppy.io/docs/dropbox/)
 2. Restart the backend server.
-3. Refresh the page [http:localhost:3020](http:localhost:3020)
+3. Refresh the page [http://localhost:3020](http://localhost:3020)
 
 ```
 # Third-party app's credentials
