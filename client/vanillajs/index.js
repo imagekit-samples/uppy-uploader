@@ -8,18 +8,18 @@ import GoogleDrive from '@uppy/google-drive'
 import Dropbox from '@uppy/dropbox'
 import Facebook from '@uppy/facebook'
 
-const SERVER_URL = "https://593487260f15.ngrok.io";
-const IMAGEKIT_PUBLIC_KEY = "public_BimyddYm83A5tzSLpdF71jNfgoI=";
+const SERVER_BASE_URL = "http://localhost:3020";
+const IMAGEKIT_PUBLIC_KEY = "your_public_key";
 
 const uppy = Uppy({ debug: true, autoProceed: false })
     .use(Dashboard, { inline: true, trigger: '#uppyDashboard' })
-    .use(GoogleDrive, { target: Dashboard, companionUrl: SERVER_URL }) // don't had trailing slash
-    .use(Dropbox, { target: Dashboard, companionUrl: SERVER_URL})
-    .use(Facebook, { target: Dashboard, companionUrl: SERVER_URL})
-    .use(Url, { target: Dashboard, companionUrl: SERVER_URL })
+    .use(GoogleDrive, { target: Dashboard, companionUrl: SERVER_BASE_URL }) // don't had trailing slash
+    .use(Dropbox, { target: Dashboard, companionUrl: SERVER_BASE_URL})
+    .use(Facebook, { target: Dashboard, companionUrl: SERVER_BASE_URL})
+    .use(Url, { target: Dashboard, companionUrl: SERVER_BASE_URL })
     .use(ImageKitUppyPlugin, {
         id: 'ImageKit',
-        authenticationEndpoint: `${SERVER_URL}/auth`,
+        authenticationEndpoint: `${SERVER_BASE_URL}/auth`,
         publicKey: IMAGEKIT_PUBLIC_KEY,
         metaFields: ["useUniqueFileName", "tags", "folder", "isPrivateFile", "customCoordinates", "responseFields"]
     })

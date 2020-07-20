@@ -5,11 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist*;parcel build static/index.js --out-file bundle.js",
-    "start": "parcel ./client/index.html"
+    "build": "rm -rf dist*;parcel build client/vanillajs/index.js --out-file bundle.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@uppy/companion": "^2.0.0-alpha.7",
     "@uppy/core": "^1.12.0",
