@@ -53,7 +53,7 @@ const uppyOptions = {
     protocol: 'https'
   },
   filePath: '/tmp',
-  secret: 'dsdkd',
+  secret: 'some-secret',
   debug: true
 }
 
