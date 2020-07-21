@@ -29,7 +29,7 @@ app.get("/auth", (req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "static", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 })
 
 // initialize uppy
@@ -49,7 +49,7 @@ const uppyOptions = {
     }
   },
   server: {
-    host: '593487260f15.ngrok.io',
+    host: 'localhost:3020',
     protocol: 'https'
   },
   filePath: '/tmp',
