@@ -60,7 +60,9 @@ const uppy = Uppy({ debug: true, autoProceed: false })
     .use(Dashboard, {
         inline: true,
         trigger: '#uppyDashboard',
-        metaFields: metaFields
+        metaFields: metaFields,
+        proudlyDisplayPoweredByUppy : false,
+        note : "ImageKit Uppy Sample • https://github.com/imagekit-samples/uppy-uploader"
     })
     .use(GoogleDrive, { target: Dashboard, companionUrl: SERVER_BASE_URL }) // don't add trailing slash
     .use(Dropbox, { target: Dashboard, companionUrl: SERVER_BASE_URL })
