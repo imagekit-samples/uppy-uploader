@@ -18,26 +18,27 @@ Both npm and yarn should work, but we used yarn during the development and testi
 yarn install
 ```
 
-**3. Build the JS and CSS bundle**
+**3. Configure .env file**
 
-This following command will create client-side JS and CSS files, if you want to make some changes in the client-side JS file [client/vanillajs/index.js](client/vanillajs/index.js), run this command to generate bundles again.
-```
-yarn build
-```
+Create a copy of `env.example` file and save it as `.env` file. This file contains your private keys, which will be used on the server-side. For a minimal setup, you need to put required variables.
 
-**4. Configure private and public key**
+```bash
+# Required variables. If running in codesandbox, please add secrets in your fork
+IMAGEKIT_PUBLIC_KEY=
+IMAGEKIT_PRIVATE_KEY=
+IMAGEKIT_URL_ENDPOINT=
 
-Create a copy of `env.example` file and save it as `.env` file. This file contains your private keys, which will be used on the server-side. For a minimal setup, just put the required ImageKit.io credentials.
-
-Open [client/vanillajs/index.js](client/vanillajs/index.js) and set your ImageKit [public key](https://docs.imagekit.io/api-reference/api-introduction/api-keys#public-key) in variable `IMAGEKIT_PUBLIC_KEY`. This is required on the client-side.
-
-**5. Start the server**
-
-```
-node server/index.js
+# Don't add trailing slash in SERVER_BASE_URL. It should be either http://localhost:3020 or your codesandbox URL
+SERVER_BASE_URL=
 ```
 
-Open [http://localhost:3020](http://localhost:3020) in your browser.
+**4. Start the application**
+
+```
+yarn start
+```
+
+Open [http://localhost:3020](http://localhost:3020) in your browser. This address will be equal to `SERVER_BASE_URL` variable value that you entered in **.env** file.
 
 
 # How to use DropBox, Facebook and Drive upload options

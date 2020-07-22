@@ -6,13 +6,43 @@ const ImageKit = require("imagekit");
 const path = require('path');
 require('dotenv').config()
 
+if (
+  !process.env.IMAGEKIT_PUBLIC_KEY ||
+  !process.env.IMAGEKIT_PRIVATE_KEY ||
+  !process.env.IMAGEKIT_URL_ENDPOINT ||
+  !process.env.SERVER_BASE_URL
+) {
+  console.log(
+    `The .env file is not configured. Follow the instructions in the readme to configure the .env file. https://github.com/imagekit-samples/uppy-uploader. A step by step walkthrough of the code is also available at https://docs.imagekit.io/sample-projects/upload-widget/uppy-upload-widget/.`
+  );
+  console.log('');
+  process.env.IMAGEKIT_PUBLIC_KEY
+    ? ''
+    : console.log('Add IMAGEKIT_PUBLIC_KEY to your .env file.');
+
+  process.env.IMAGEKIT_PRIVATE_KEY
+    ? ''
+    : console.log('Add IMAGEKIT_PRIVATE_KEY to your .env file.');
+
+  process.env.IMAGEKIT_URL_ENDPOINT
+    ? ''
+    : console.log('Add IMAGEKIT_URL_ENDPOINT to your .env file.');
+
+  process.env.SERVER_BASE_URL
+    ? ''
+    : console.log('Add SERVER_BASE_URL to your .env file.');
+
+  process.exit();
+}
+
 var imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 });
 
-const app = express()
+const app = express();
+app.set('view engine', 'ejs');
 
 app.use("/dist", express.static(path.join(__dirname, '..', 'dist')));
 app.use(bodyParser.json())
@@ -29,7 +59,10 @@ app.get("/auth", (req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "client", "index.html"));
+  res.render(path.join(__dirname, "..", "client", "index"), {
+    IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+    SERVER_BASE_URL: process.env.SERVER_BASE_URL
+  });
 })
 
 // initialize uppy
@@ -72,5 +105,4 @@ app.use((err, req, res, next) => {
 
 companion.socket(app.listen(3020), uppyOptions)
 
-console.log('Welcome to Companion!')
-console.log(`Listening on http://0.0.0.0:${3020}`)
+console.log(`Listening on ${process.env.SERVER_BASE_URL}`)

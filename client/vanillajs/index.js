@@ -7,14 +7,11 @@ import ImageKitUppyPlugin from "imagekit-uppy-plugin"
 import GoogleDrive from '@uppy/google-drive'
 import Dropbox from '@uppy/dropbox'
 import Facebook from '@uppy/facebook'
+import Webcam from "@uppy/webcam"
+import '@uppy/webcam/dist/style.css'
 
-const SERVER_BASE_URL = "http://localhost:3020"; // don't add trailing slash
-const IMAGEKIT_PUBLIC_KEY = "your_public_key";
-
-if (IMAGEKIT_PUBLIC_KEY === "your_public_key") {
-    console.error("Enter your public key in client side JS file")
-    alert("Enter your public key in client side JS file");
-}
+const SERVER_BASE_URL = window.SERVER_BASE_URL;
+const IMAGEKIT_PUBLIC_KEY = window.IMAGEKIT_PUBLIC_KEY;
 
 const metaFields = [
     {
@@ -68,6 +65,7 @@ const uppy = Uppy({ debug: true, autoProceed: false })
     .use(GoogleDrive, { target: Dashboard, companionUrl: SERVER_BASE_URL }) // don't add trailing slash
     .use(Dropbox, { target: Dashboard, companionUrl: SERVER_BASE_URL })
     .use(Facebook, { target: Dashboard, companionUrl: SERVER_BASE_URL })
+    .use(Webcam, { target: Dashboard })
     .use(Url, { target: Dashboard, companionUrl: SERVER_BASE_URL })
     .use(ImageKitUppyPlugin, {
         id: 'ImageKit',
