@@ -1,22 +1,27 @@
 # Uppy uploader
 ImageKit sample integration with [Uppy](https://github.com/transloadit/uppy) upload widget.
 
+# Live demo
+You can see a hosted demo of this sample project [here](https://066dn.sse.codesandbox.io) or [fork this on codesandbox.io](https://codesandbox.io/s/github/imagekit-samples/uppy-uploader).
+
+A step by step walkthrough of the code is also available at https://docs.imagekit.io/sample-projects/upload-widget/uppy-upload-widget/
+
 <img src="/assets/imagekit-uppy-demo.gif">
 
 # Features
 This sample project has the following features. The best way to integrate an upload widget in your application is to clone this application or copy and paste the relevant part.
 
-✅Upload files from the local device.
+✅ Upload files from the local device.
 
-✅Upload files using remote URLs.
+✅ Upload files using remote URLs.
 
-✅Let users choose files from Google Drive, Dropbox, Instagram, or Facebook.
+✅ Let users choose files from Google Drive, Dropbox, Instagram, or Facebook.
 
-✅Option to record a selfie using the device camera and upload it.
+✅ Option to record a selfie using the device camera and upload it.
 
-✅Preview added file.
+✅ Preview added file.
 
-✅Customize the upload request parameters like file name, tags, folder path, custom coordinates, private file attribute, etc using a nice interface. 
+✅ Customize the upload request parameters like file name, tags, folder path, custom coordinates, private file attribute, etc using a nice interface. 
 
 # How to run locally
 
