@@ -87,8 +87,8 @@ const uppyOptions = {
     }
   },
   server: {
-    host: 'localhost:3020',
-    protocol: 'https'
+    host: new URL(process.env.SERVER_BASE_URL).host,
+    protocol: new URL(process.env.SERVER_BASE_URL).protocol
   },
   filePath: '/tmp',
   secret: 'some-secret',
