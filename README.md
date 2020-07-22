@@ -20,15 +20,15 @@ yarn install
 
 **3. Configure .env file**
 
-Create a copy of `env.example` file and save it as `.env` file. This file contains your private keys, which will be used on the server-side. For a minimal setup, you need to put required variables.
+Create a copy of `env.example` file and save it as `.env` file. This file contains your private keys, which will be used on the server-side. For a minimal setup, you need to put the following required variables i.e. `IMAGEKIT_PUBLIC_KEY`, `IMAGEKIT_PRIVATE_KEY`, `IMAGEKIT_URL_ENDPOINT`, and `SERVER_BASE_URL`.
 
 ```bash
-# Required variables. If running in codesandbox, please add secrets in your fork
+# Required variables. If running in Codesandbox, please add secrets in your fork
 IMAGEKIT_PUBLIC_KEY=
 IMAGEKIT_PRIVATE_KEY=
 IMAGEKIT_URL_ENDPOINT=
 
-# Don't add trailing slash in SERVER_BASE_URL. It should be either http://localhost:3020 or your codesandbox URL
+# Don't add trailing slash in SERVER_BASE_URL. It should be either http://localhost:3020 or your Codesandbox URL
 SERVER_BASE_URL=
 ```
 
