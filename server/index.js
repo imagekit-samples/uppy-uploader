@@ -46,9 +46,14 @@ app.set('view engine', 'ejs');
 
 app.use("/dist", express.static(path.join(__dirname, '..', 'dist')));
 app.use(bodyParser.json())
+app.use(session({
+  secret: 'some-secret',
+  resave: true,
+  saveUninitialized: true
+}))
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, Content-Type, Accept, *');
   next()
 })
