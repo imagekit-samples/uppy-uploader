@@ -12,6 +12,47 @@ import '@uppy/webcam/dist/style.css'
 
 const SERVER_BASE_URL = window.SERVER_BASE_URL;
 const IMAGEKIT_PUBLIC_KEY = window.IMAGEKIT_PUBLIC_KEY;
+const AUTHENTICATOR_TIMEOUT = 6000;
+
+const authenticator = () => {
+    return new Promise((resolve, reject) => {
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = AUTHENTICATOR_TIMEOUT;
+        var url = `${SERVER_BASE_URL}/auth`;
+        if (url.indexOf("?") === -1) {
+            url += `?t=${Math.random().toString()}`;
+        } else {
+            url += `&t=${Math.random().toString()}`;
+        }
+        xhr.open('GET', url);
+        xhr.ontimeout = function (e) {
+            reject(["Authentication request timed out in 60 seconds", xhr]);
+        };
+        xhr.addEventListener("load", () => {
+            if (xhr.status === 200) {
+                try {
+                    var body = JSON.parse(xhr.responseText);
+                    var obj = {
+                        signature: body.signature,
+                        expire: body.expire,
+                        token: body.token
+                    }
+                    resolve(obj);
+                } catch (ex) {
+                    reject([ex, xhr]);
+                }
+            } else {
+                try {
+                    var error = JSON.parse(xhr.responseText);
+                    reject([error, xhr]);
+                } catch (ex) {
+                    reject([ex, xhr]);
+                }
+            }
+        });
+        xhr.send();
+    })
+}
 
 const metaFields = [
     {
@@ -61,8 +102,8 @@ const uppy = Uppy({ debug: true, autoProceed: false })
         inline: true,
         trigger: '#uppyDashboard',
         metaFields: metaFields,
-        proudlyDisplayPoweredByUppy : false,
-        note : "ImageKit Uppy Sample • https://github.com/imagekit-samples/uppy-uploader"
+        proudlyDisplayPoweredByUppy: false,
+        note: "ImageKit Uppy Sample • https://github.com/imagekit-samples/uppy-uploader"
     })
     .use(GoogleDrive, { target: Dashboard, companionUrl: SERVER_BASE_URL }) // don't add trailing slash
     .use(Dropbox, { target: Dashboard, companionUrl: SERVER_BASE_URL })
@@ -71,8 +112,8 @@ const uppy = Uppy({ debug: true, autoProceed: false })
     .use(Url, { target: Dashboard, companionUrl: SERVER_BASE_URL })
     .use(ImageKitUppyPlugin, {
         id: 'ImageKit',
-        authenticationEndpoint: `${SERVER_BASE_URL}/auth`,
         publicKey: IMAGEKIT_PUBLIC_KEY,
+        authenticator,
         metaFields: [
             "useUniqueFileName",
             "tags",
