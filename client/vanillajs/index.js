@@ -1,3 +1,5 @@
+import 'regenerator-runtime/runtime'
+
 import Uppy from '@uppy/core'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
@@ -12,47 +14,25 @@ import '@uppy/webcam/dist/style.css'
 
 const SERVER_BASE_URL = window.SERVER_BASE_URL;
 const IMAGEKIT_PUBLIC_KEY = window.IMAGEKIT_PUBLIC_KEY;
-const AUTHENTICATOR_TIMEOUT = 6000;
 
-const authenticator = () => {
-    return new Promise((resolve, reject) => {
-        var xhr = new XMLHttpRequest();
-        xhr.timeout = AUTHENTICATOR_TIMEOUT;
-        var url = `${SERVER_BASE_URL}/auth`;
-        if (url.indexOf("?") === -1) {
-            url += `?t=${Math.random().toString()}`;
-        } else {
-            url += `&t=${Math.random().toString()}`;
+const authenticator = async () => {
+    try {
+
+        // You can pass headers as well and later validate the request source in the backend, or you can use headers for any other use case.
+        const response = await fetch(`${SERVER_BASE_URL}/auth`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
         }
-        xhr.open('GET', url);
-        xhr.ontimeout = function (e) {
-            reject(["Authentication request timed out in 60 seconds", xhr]);
-        };
-        xhr.addEventListener("load", () => {
-            if (xhr.status === 200) {
-                try {
-                    var body = JSON.parse(xhr.responseText);
-                    var obj = {
-                        signature: body.signature,
-                        expire: body.expire,
-                        token: body.token
-                    }
-                    resolve(obj);
-                } catch (ex) {
-                    reject([ex, xhr]);
-                }
-            } else {
-                try {
-                    var error = JSON.parse(xhr.responseText);
-                    reject([error, xhr]);
-                } catch (ex) {
-                    reject([ex, xhr]);
-                }
-            }
-        });
-        xhr.send();
-    })
-}
+
+        const data = await response.json();
+        const { signature, expire, token } = data;
+        return { signature, expire, token };
+    } catch (error) {
+        throw new Error(`Authentication request failed: ${error.message}`);
+    }
+};
 
 const metaFields = [
     {
