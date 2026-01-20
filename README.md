@@ -1,8 +1,8 @@
 # Uppy uploader
 ImageKit sample integration with [Uppy](https://github.com/transloadit/uppy) upload widget.
 
-# Live demo
-You can see a hosted demo of this sample project [here](https://066dn.sse.codesandbox.io) or [fork this on codesandbox.io](https://codesandbox.io/s/github/imagekit-samples/uppy-uploader).
+# Demo application
+[Fork this on CodeSandbox](https://codesandbox.io/s/github/imagekit-samples/uppy-uploader)
 
 A step by step walkthrough of the code is also available at https://docs.imagekit.io/sample-projects/upload-widget/uppy-upload-widget/
 
