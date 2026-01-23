@@ -4,8 +4,6 @@ ImageKit sample integration with [Uppy](https://github.com/transloadit/uppy) upl
 # Demo application
 [Fork this on CodeSandbox](https://codesandbox.io/s/github/imagekit-samples/uppy-uploader)
 
-A step by step walkthrough of the code is also available at https://docs.imagekit.io/sample-projects/upload-widget/uppy-upload-widget/
-
 <img src="/assets/imagekit-uppy-demo.gif">
 
 # Features
