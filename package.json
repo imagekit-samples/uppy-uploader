@@ -26,7 +26,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "imagekit": "^3.0.5",
-    "imagekit-uppy-plugin": "1.0.0-beta.1",
+    "imagekit-uppy-plugin": "^2.0.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
