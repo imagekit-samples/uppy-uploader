@@ -4,14 +4,15 @@
     <title></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="./dist/bundle.css" rel="stylesheet">
+    <link href="./dist/index.css" rel="stylesheet">
   </head>
   <body>
     <div id="uppyDashboard"></div>
     <script>
       window.IMAGEKIT_PUBLIC_KEY = "<%= IMAGEKIT_PUBLIC_KEY %>";
+      window.IMAGEKIT_URL_ENDPOINT = "<%= IMAGEKIT_URL_ENDPOINT %>";
       window.SERVER_BASE_URL = "<%= SERVER_BASE_URL %>";
     </script>
-    <script src="./dist/bundle.js"></script>
+    <script src="./dist/index.js"></script>
   </body>
 </html>
