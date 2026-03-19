@@ -39,9 +39,9 @@ const imagekit = new ImageKit({
 // Express app setup
 // ---------------------------------------------------------------------------
 const app = express();
-app.set('view engine', 'ejs');
 
 app.use('/dist', express.static(path.join(__dirname, '..', 'dist')));
+app.use(express.static(path.join(__dirname, '..', 'client')));
 app.use(bodyParser.json());
 app.use(
   session({
@@ -58,6 +58,17 @@ app.use((req, res, next) => {
     'Authorization, Origin, Content-Type, Accept'
   );
   next();
+});
+
+// ---------------------------------------------------------------------------
+// Configuration endpoint - returns environment variables to client
+// ---------------------------------------------------------------------------
+app.get('/config', (req, res) => {
+  res.json({
+    IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+    IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
+    SERVER_BASE_URL: process.env.SERVER_BASE_URL,
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -78,17 +89,6 @@ app.get('/auth', (req, res) => {
     console.error('Error generating authentication parameters:', error);
     res.status(500).json({ message: 'Failed to generate authentication parameters' });
   }
-});
-
-// ---------------------------------------------------------------------------
-// Serve the main page
-// ---------------------------------------------------------------------------
-app.get('/', (req, res) => {
-  res.render(path.join(__dirname, '..', 'client', 'index'), {
-    IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
-    IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
-    SERVER_BASE_URL: process.env.SERVER_BASE_URL,
-  });
 });
 
 // ---------------------------------------------------------------------------
