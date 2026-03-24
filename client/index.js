@@ -17,18 +17,6 @@
 //     directly to ImageKit with the auth params forwarded as metadata.
 // =============================================================================
 
-import Uppy from "@uppy/core";
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
-import Dashboard from "@uppy/dashboard";
-import XHRUpload from "@uppy/xhr-upload";
-import Url from "@uppy/url";
-import GoogleDrive from "@uppy/google-drive";
-import Dropbox from "@uppy/dropbox";
-import Facebook from "@uppy/facebook";
-import Webcam from "@uppy/webcam";
-import "@uppy/webcam/dist/style.css";
-
 // ---------------------------------------------------------------------------
 // Globals - fetch from server config endpoint
 // ---------------------------------------------------------------------------
@@ -144,9 +132,19 @@ const metaFields = [
 // =============================================================================
 
 function initializeUppy() {
-  const uppy = new Uppy({ debug: true, autoProceed: false })
+  // Uppy v5.2.1 from CDN exposes the constructor as window.Uppy
+  if (!window.Uppy) {
+    throw new Error('Uppy library failed to load from CDN. Check your internet connection.');
+  }
+
+  const Uppy = window.Uppy
+
+  const uppy = new Uppy.Uppy({
+    debug: true,
+    autoProceed: false,
+  })
     // --- Dashboard UI --------------------------------------------------------
-    .use(Dashboard, {
+    .use(Uppy.Dashboard, {
       inline: true,
       target: "#uppyDashboard",
       metaFields,
@@ -156,21 +154,21 @@ function initializeUppy() {
       showProgressDetails: true,
     })
     // --- Remote providers (require Companion running on the server) ----------
-    .use(GoogleDrive, { target: Dashboard, companionUrl: SERVER_BASE_URL })
-    .use(Dropbox, { target: Dashboard, companionUrl: SERVER_BASE_URL })
-    .use(Facebook, { target: Dashboard, companionUrl: SERVER_BASE_URL })
+    .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: SERVER_BASE_URL })
+    .use(Uppy.Dropbox, { target: Uppy.Dashboard, companionUrl: SERVER_BASE_URL })
+    .use(Uppy.Facebook, { target: Uppy.Dashboard, companionUrl: SERVER_BASE_URL })
     // --- Local providers -----------------------------------------------------
-    .use(Webcam, { target: Dashboard })
-    .use(Url, { target: Dashboard, companionUrl: SERVER_BASE_URL })
+    .use(Uppy.Webcam, { target: Uppy.Dashboard })
+    .use(Uppy.Url, { target: Uppy.Dashboard, companionUrl: SERVER_BASE_URL })
     // --- XHR Upload — sends files directly to ImageKit's upload API ----------
-    .use(XHRUpload, {
+    .use(Uppy.XHRUpload, {
       endpoint: "https://upload.imagekit.io/api/v1/files/upload",
       fieldName: "file",
       formData: true,
       // Send all file metadata as form fields. The preprocessor below injects
       // the required ImageKit auth params (publicKey, signature, token, expire,
       // fileName) into each file's metadata before the upload starts.
-      metaFields: null,
+      allowedMetaFields: true,
       // ImageKit returns JSON with a `url` field pointing to the uploaded file.
       responseUrlFieldName: "url",
       // Disable the stall timeout — large files or slow connections may take a while.
@@ -225,8 +223,10 @@ function initializeUppy() {
 // Initialize app
 // =============================================================================
 
-loadConfig().then(() => {
-  initializeUppy();
-}).catch((error) => {
-  console.error('Failed to initialize application:', error);
-});
+loadConfig()
+  .then(() => {
+    initializeUppy();
+  })
+  .catch((error) => {
+    console.error('Failed to initialize application:', error);
+  });

@@ -1,37 +1,20 @@
 {
   "name": "imagekit-uppy-demo",
   "version": "1.0.0",
-  "description": "",
-  "source": "client/index.js",
+  "description": "ImageKit file upload integration with Uppy - no build tools needed",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf dist .parcel-cache",
-    "build": "yarn clean; parcel build --dist-dir dist",
-    "start": "set -a; source .env; set +a; yarn build; node server/index.js"
+    "start": "set -a; source .env; set +a; node server/index.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@imagekit/nodejs": "^7.0.0",
-    "@uppy/companion": "^2.0.0-alpha.7",
-    "@uppy/core": "^1.12.0",
-    "@uppy/dashboard": "^1.10.2",
-    "@uppy/dropbox": "^1.4.9",
-    "@uppy/facebook": "^1.1.9",
-    "@uppy/google-drive": "^1.5.9",
-    "@uppy/url": "^1.5.8",
-    "@uppy/webcam": "^1.6.8",
-    "@uppy/xhr-upload": "^1",
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.0.0-0",
-    "@babel/preset-env": "^7.29.0",
-    "buffer": "^5.5.0||^6.0.0",
-    "parcel": "^2"
+    "@uppy/companion": "^3.6.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3"
   }
 }

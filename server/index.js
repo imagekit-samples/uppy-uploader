@@ -40,7 +40,6 @@ const imagekit = new ImageKit({
 // ---------------------------------------------------------------------------
 const app = express();
 
-app.use('/dist', express.static(path.join(__dirname, '..', 'dist')));
 app.use(express.static(path.join(__dirname, '..', 'client')));
 app.use(bodyParser.json());
 app.use(
