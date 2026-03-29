@@ -152,6 +152,7 @@ function initializeUppy() {
       note: "ImageKit + Uppy Demo • https://github.com/imagekit-samples/uppy-uploader",
       theme: "dark",
       showProgressDetails: true,
+      showLinkToFileUploadResult: true,
     })
     // --- Remote providers (require Companion running on the server) ----------
     .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: SERVER_BASE_URL })
