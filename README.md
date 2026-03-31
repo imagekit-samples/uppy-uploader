@@ -4,6 +4,10 @@ A complete integration example showing how to use [Uppy.io](https://uppy.io/) fo
 
 Files are uploaded **directly** from the browser to ImageKit's upload API via Uppy's built-in XHR Upload plugin.
 
+# Demo application
+
+[Fork this on CodeSandbox](https://codesandbox.io/s/github/imagekit-samples/uppy-uploader)
+
 <img src="/assets/imagekit-uppy-demo.gif">
 
 ## 🌟 Features
@@ -18,7 +22,6 @@ Files are uploaded **directly** from the browser to ImageKit's upload API via Up
 ## 📋 Prerequisites
 
 - Node.js (v18 or higher)
-- npm or yarn
 - An ImageKit account ([Sign up for free](https://imagekit.io/registration))
 - ImageKit API credentials:
   - Public Key
@@ -38,7 +41,7 @@ cd uppy-uploader
 ### 2. Install Dependencies
 
 ```bash
-yarn install
+npm install
 ```
 
 ### 3. Get ImageKit Credentials
@@ -312,7 +315,7 @@ Uppy supports multiple upload sources. Test each one:
    DRIVE_KEY=your_google_oauth_client_id
    DRIVE_SECRET=your_google_oauth_secret
    ```
-2. Restart server: `yarn start`
+2. Restart server: `npm start`
 
 **Usage:**
 1. Click the **Google Drive** icon
@@ -329,7 +332,7 @@ Uppy supports multiple upload sources. Test each one:
    DROPBOX_KEY=your_dropbox_app_key
    DROPBOX_SECRET=your_dropbox_app_secret
    ```
-2. Restart server: `yarn start`
+2. Restart server: `npm start`
 
 **Usage:**
 1. Click the **Dropbox** icon
@@ -353,7 +356,7 @@ Uppy supports multiple upload sources. Test each one:
 ### Test Case 1: Successful Image Upload
 
 **Steps:**
-1. Start server: `yarn start`
+1. Start server: `npm start`
 2. Open browser: http://localhost:3020
 3. Click "browse files"
 4. Select any image (JPG, PNG, WebP, etc.)
@@ -490,7 +493,7 @@ curl http://localhost:3020/auth
 **Solution**:
 ```bash
 # Make sure server is running
-yarn start
+npm start
 
 # Test the config endpoint
 curl http://localhost:3020/config
