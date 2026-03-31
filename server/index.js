@@ -22,8 +22,7 @@ if (missing.length > 0) {
     'The .env file is not configured. Follow the instructions in the README to configure the .env file.\n' +
     'https://github.com/imagekit-samples/uppy-uploader\n'
   );
-  missing.forEach((key) => console.log(`  Add ${key} to your .env file.`));
-  process.exit(1);
+  missing.forEach((key) => { console.log(`  Add ${key} to your .env file.`); });
 }
 
 // ---------------------------------------------------------------------------
@@ -40,6 +39,25 @@ const imagekit = new ImageKit({
 // ---------------------------------------------------------------------------
 const app = express();
 
+if (missing.length > 0) {
+  app.use((req, res) => {
+    res.status(500).send(`
+      <!DOCTYPE html>
+      <html>
+        <head><title>Server Configuration Error</title></head>
+        <body>
+          <h1>Server Configuration Error</h1>
+          <p>The following mandatory environment variables are missing:</p>
+          <ul>
+            ${missing.map(key => `<li>${key}</li>`).join('')}
+          </ul>
+          <p>Please configure your .env file and restart the server.</p>
+          <p>Refer to the <a href="https://github.com/imagekit-samples/uppy-uploader">README</a> for more information.</p>
+        </body>
+      </html>
+    `);
+  });
+}
 app.use(express.static(path.join(__dirname, '..', 'client')));
 app.use(bodyParser.json());
 app.use(
