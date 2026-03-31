@@ -40,7 +40,7 @@ const imagekit = new ImageKit({
 const app = express();
 
 if (missing.length > 0) {
-  app.use((req, res) => {
+  app.use((_req, res) => {
     res.status(500).send(`
       <!DOCTYPE html>
       <html>
@@ -67,7 +67,7 @@ app.use(
     saveUninitialized: true,
   })
 );
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
   res.setHeader(
@@ -80,7 +80,7 @@ app.use((req, res, next) => {
 // ---------------------------------------------------------------------------
 // Configuration endpoint - returns environment variables to client
 // ---------------------------------------------------------------------------
-app.get('/config', (req, res) => {
+app.get('/config', (_req, res) => {
   res.json({
     IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
     IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
@@ -95,7 +95,7 @@ app.get('/config', (req, res) => {
 // The client-side @imagekit/javascript `upload()` function requires all four
 // fields. `token` is single-use — a fresh set must be fetched before every
 // upload attempt (including retries).
-app.get('/auth', (req, res) => {
+app.get('/auth', (_req, res) => {
   try {
     const authParams = imagekit.helper.getAuthenticationParameters();
     res.json({
@@ -145,12 +145,12 @@ app.use(companion.app(uppyOptions));
 // ---------------------------------------------------------------------------
 
 // handle 404
-app.use((req, res, next) => {
+app.use((_req, res, _next) => {
   return res.status(404).json({ message: 'Not Found' });
 });
 
 // handle server errors
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   console.error('\x1b[31m', err.stack, '\x1b[0m');
   res.status(err.status || 500).json({ message: err.message, error: err });
 });
