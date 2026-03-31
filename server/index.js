@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const ImageKit = require('@imagekit/nodejs').default;
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 // ---------------------------------------------------------------------------
@@ -28,36 +29,34 @@ if (missing.length > 0) {
 // ---------------------------------------------------------------------------
 // ImageKit SDK initialisation
 // ---------------------------------------------------------------------------
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-});
+let imagekit;
+
+if (missing.length === 0) {
+  imagekit = new ImageKit({
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Express app setup
 // ---------------------------------------------------------------------------
 const app = express();
 
-if (missing.length > 0) {
-  app.use((_req, res) => {
-    res.status(500).send(`
-      <!DOCTYPE html>
-      <html>
-        <head><title>Server Configuration Error</title></head>
-        <body>
-          <h1>Server Configuration Error</h1>
-          <p>The following mandatory environment variables are missing:</p>
-          <ul>
-            ${missing.map(key => `<li>${key}</li>`).join('')}
-          </ul>
-          <p>Please configure your .env file and restart the server.</p>
-          <p>Refer to the <a href="https://github.com/imagekit-samples/uppy-uploader">README</a> for more information.</p>
-        </body>
-      </html>
-    `);
-  });
-}
+// Load error template
+const errorTemplate = fs.readFileSync(path.join(__dirname, 'error-template.html'), 'utf-8');
+
+app.use((_req, res, next) => {
+  if (missing.length > 0) {
+    const missingVarsHtml = missing.map(key => `<li>${key}</li>`).join('');
+    const html = errorTemplate.replace('{{{MISSING_VARS}}}', missingVarsHtml);
+    res.status(500).send(html);
+  } else {
+    next();
+  }
+});
+
 app.use(express.static(path.join(__dirname, '..', 'client')));
 app.use(bodyParser.json());
 app.use(
@@ -111,34 +110,35 @@ app.get('/auth', (_req, res) => {
 // ---------------------------------------------------------------------------
 // Uppy Companion — provides Google Drive, Dropbox, Facebook integrations
 // ---------------------------------------------------------------------------
-
-
-const uppyOptions = {
-  providerOptions: {
-    facebook: {
-      key: process.env.FACEBOOK_KEY,
-      secret: process.env.FACEBOOK_SECRET,
+let uppyOptions = {};
+if (missing.length === 0) {
+  uppyOptions = {
+    providerOptions: {
+      facebook: {
+        key: process.env.FACEBOOK_KEY,
+        secret: process.env.FACEBOOK_SECRET,
+      },
+      drive: {
+        key: process.env.DRIVE_KEY,
+        secret: process.env.DRIVE_SECRET,
+      },
+      dropbox: {
+        key: process.env.DROPBOX_KEY,
+        secret: process.env.DROPBOX_SECRET,
+      },
     },
-    drive: {
-      key: process.env.DRIVE_KEY,
-      secret: process.env.DRIVE_SECRET,
+    server: {
+      host: new URL(process.env.SERVER_BASE_URL).host, // the host including port e.g. localhost:3020
+      protocol: new URL(process.env.SERVER_BASE_URL).protocol.replace(":","") // it should be http or https
     },
-    dropbox: {
-      key: process.env.DROPBOX_KEY,
-      secret: process.env.DROPBOX_SECRET,
-    },
-  },
-  server: {
-    host: new URL(process.env.SERVER_BASE_URL).host, // the host including port e.g. localhost:3020
-    protocol: new URL(process.env.SERVER_BASE_URL).protocol.replace(":","") // it should be http or https
-  },
-  filePath: '/tmp',
-  secret: 'some-secret',
-  debug: true,
-  enableUrlEndpoint: true,
-};
-
-app.use(companion.app(uppyOptions));
+    filePath: '/tmp',
+    secret: 'some-secret',
+    debug: true,
+    enableUrlEndpoint: true,
+  };
+  
+  app.use(companion.app(uppyOptions));
+}
 
 // ---------------------------------------------------------------------------
 // Error handling

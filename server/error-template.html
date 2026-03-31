@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Server Configuration Error</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        background-color: #1a1a1a;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      }
+      .error-card {
+        background: #2a2a2a;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        max-width: 600px;
+        border: 1px solid #444;
+      }
+      .error-header {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 30px;
+        border-radius: 12px 12px 0 0;
+        border-bottom: 2px solid #ef4444;
+      }
+      .error-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 600;
+        color: #ef4444;
+      }
+      .error-body {
+        padding: 30px;
+      }
+      .error-body p {
+        color: #e0e0e0;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .error-body strong {
+        color: #fff;
+      }
+      .env-list {
+        background: #1a1a1a;
+        border-left: 4px solid #3b82f6;
+        padding: 15px 20px;
+        border-radius: 4px;
+        margin: 20px 0;
+        border: 1px solid #444;
+      }
+      .env-list ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .env-list li {
+        color: #ef4444;
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .help-link {
+        display: inline-block;
+        margin-top: 20px;
+      }
+      .help-link a {
+        color: white;
+        background: #3b82f6;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s;
+        display: inline-block;
+      }
+      .help-link a:hover {
+        background: #2563eb;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-card">
+      <div class="error-header">
+        <h1>⚠️ Configuration Error</h1>
+      </div>
+      <div class="error-body">
+        <p>The following mandatory environment variables are missing:</p>
+        <div class="env-list">
+          <ul>
+            {{{MISSING_VARS}}}
+          </ul>
+        </div>
+        <p>Please configure your <strong>.env</strong> file in the project root directory and restart the server.</p>
+        <p class="mb-0"><small style="color: #999;">Refer to the README for more information on how to set up these variables.</small></p>
+        <div class="help-link">
+          <a href="https://github.com/imagekit-samples/uppy-uploader" target="_blank">View Setup Instructions</a>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
