@@ -129,19 +129,6 @@ Then restart the server and refresh the page. For instructions on creating third
 - Enable [Uppy debug mode](https://uppy.io/docs/uppy/#debug) for detailed logging
 - [Open an issue](https://github.com/imagekit-samples/uppy-uploader/issues) on GitHub
 
-## Security
-
-Your private key should never leave the server. This project follows these practices:
-
-- `.env` is listed in `.gitignore` to prevent accidental commits
-- Authentication parameters are generated server-side and contain a short-lived token
-- The private key is never sent to the client
-
-For production deployments, also consider:
-- Implementing user authentication before issuing upload tokens
-- Using separate credentials for development and production environments
-- Rotating keys immediately if they are accidentally exposed
-
 ## Resources
 
 - [Uppy Documentation](https://uppy.io/docs/)
