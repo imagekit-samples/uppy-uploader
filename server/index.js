@@ -1,113 +1,163 @@
-const express = require('express')
-const companion = require('@uppy/companion')
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const ImageKit = require("imagekit");
+const express = require('express');
+const companion = require('@uppy/companion');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const ImageKit = require('@imagekit/nodejs').default;
 const path = require('path');
-require('dotenv').config()
+const fs = require('fs');
+require('dotenv').config();
 
-if (
-  !process.env.IMAGEKIT_PUBLIC_KEY ||
-  !process.env.IMAGEKIT_PRIVATE_KEY ||
-  !process.env.IMAGEKIT_URL_ENDPOINT ||
-  !process.env.SERVER_BASE_URL
-) {
+// ---------------------------------------------------------------------------
+// Environment validation
+// ---------------------------------------------------------------------------
+const REQUIRED_ENV_VARS = [
+  'IMAGEKIT_PUBLIC_KEY',
+  'IMAGEKIT_PRIVATE_KEY',
+  'IMAGEKIT_URL_ENDPOINT',
+  'SERVER_BASE_URL',
+];
+
+const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+if (missing.length > 0) {
   console.log(
-    `The .env file is not configured. Follow the instructions in the readme to configure the .env file. https://github.com/imagekit-samples/uppy-uploader. A step by step walkthrough of the code is also available at https://docs.imagekit.io/sample-projects/upload-widget/uppy-upload-widget/. If your are running this in Codesandbox, please add secrets in your fork.`
+    'The .env file is not configured. Follow the instructions in the README to configure the .env file.\n' +
+    'https://github.com/imagekit-samples/uppy-uploader\n'
   );
-  console.log('');
-  process.env.IMAGEKIT_PUBLIC_KEY
-    ? ''
-    : console.log('Add IMAGEKIT_PUBLIC_KEY to your .env file.');
-
-  process.env.IMAGEKIT_PRIVATE_KEY
-    ? ''
-    : console.log('Add IMAGEKIT_PRIVATE_KEY to your .env file.');
-
-  process.env.IMAGEKIT_URL_ENDPOINT
-    ? ''
-    : console.log('Add IMAGEKIT_URL_ENDPOINT to your .env file.');
-
-  process.env.SERVER_BASE_URL
-    ? ''
-    : console.log('Add SERVER_BASE_URL to your .env file.');
-
-  process.exit();
+  missing.forEach((key) => { console.log(`  Add ${key} to your .env file.`); });
 }
 
-var imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+// ---------------------------------------------------------------------------
+// ImageKit SDK initialisation
+// ---------------------------------------------------------------------------
+let imagekit;
+
+if (missing.length === 0) {
+  imagekit = new ImageKit({
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Express app setup
+// ---------------------------------------------------------------------------
+const app = express();
+
+// Load error template
+const errorTemplate = fs.readFileSync(path.join(__dirname, 'error-template.html'), 'utf-8');
+
+app.use((_req, res, next) => {
+  if (missing.length > 0) {
+    const missingVarsHtml = missing.map(key => `<li>${key}</li>`).join('');
+    const html = errorTemplate.replace('{{{MISSING_VARS}}}', missingVarsHtml);
+    res.status(500).send(html);
+  } else {
+    next();
+  }
 });
 
-const app = express();
-app.set('view engine', 'ejs');
-
-app.use("/dist", express.static(path.join(__dirname, '..', 'dist')));
-app.use(bodyParser.json())
-app.use(session({
-  secret: 'some-secret',
-  resave: true,
-  saveUninitialized: true
-}))
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
+app.use(express.static(path.join(__dirname, '..', 'client')));
+app.use(bodyParser.json());
+app.use(
+  session({
+    secret: 'some-secret',
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use((_req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, Content-Type, Accept, *');
-  next()
-})
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Authorization, Origin, Content-Type, Accept'
+  );
+  next();
+});
 
-app.get("/auth", (req, res, next) => {
-  res.send(imagekit.getAuthenticationParameters());
-})
-
-// Routes
-app.get('/', (req, res) => {
-  res.render(path.join(__dirname, "..", "client", "index"), {
+// ---------------------------------------------------------------------------
+// Configuration endpoint - returns environment variables to client
+// ---------------------------------------------------------------------------
+app.get('/config', (_req, res) => {
+  res.json({
     IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
-    SERVER_BASE_URL: process.env.SERVER_BASE_URL
+    IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
+    SERVER_BASE_URL: process.env.SERVER_BASE_URL,
   });
-})
+});
 
-// initialize uppy
-const uppyOptions = {
-  providerOptions: {
-    facebook: {
-      key: process.env.FACEBOOK_KEY,
-      secret: process.env.FACEBOOK_SECRET
+// ---------------------------------------------------------------------------
+// Authentication endpoint for client-side uploads
+// ---------------------------------------------------------------------------
+// Returns a one-time { token, signature, expire, publicKey } payload.
+// The client-side @imagekit/javascript `upload()` function requires all four
+// fields. `token` is single-use — a fresh set must be fetched before every
+// upload attempt (including retries).
+app.get('/auth', (_req, res) => {
+  try {
+    const authParams = imagekit.helper.getAuthenticationParameters();
+    res.json({
+      ...authParams,
+      publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    });
+  } catch (error) {
+    console.error('Error generating authentication parameters:', error);
+    res.status(500).json({ message: 'Failed to generate authentication parameters' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Uppy Companion — provides Google Drive, Dropbox, Facebook integrations
+// ---------------------------------------------------------------------------
+let uppyOptions = {};
+if (missing.length === 0) {
+  uppyOptions = {
+    providerOptions: {
+      facebook: {
+        key: process.env.FACEBOOK_KEY,
+        secret: process.env.FACEBOOK_SECRET,
+      },
+      drive: {
+        key: process.env.DRIVE_KEY,
+        secret: process.env.DRIVE_SECRET,
+      },
+      dropbox: {
+        key: process.env.DROPBOX_KEY,
+        secret: process.env.DROPBOX_SECRET,
+      },
     },
-    drive: {
-      key: process.env.DRIVE_KEY,
-      secret: process.env.DRIVE_SECRET,
+    server: {
+      host: new URL(process.env.SERVER_BASE_URL).host, // the host including port e.g. localhost:3020
+      protocol: new URL(process.env.SERVER_BASE_URL).protocol.replace(":","") // it should be http or https
     },
-    dropbox: {
-      key: process.env.DROPBOX_KEY,
-      secret: process.env.DROPBOX_SECRET
-    }
-  },
-  server: {
-    host: new URL(process.env.SERVER_BASE_URL).host, // the host including port e.g. localhost:3020
-    protocol: new URL(process.env.SERVER_BASE_URL).protocol.replace(":","") // it should be http or https
-  },
-  filePath: '/tmp',
-  secret: 'some-secret',
-  debug: true
+    filePath: '/tmp',
+    secret: 'some-secret',
+    debug: true,
+    enableUrlEndpoint: true,
+  };
+  
+  app.use(companion.app(uppyOptions));
 }
 
-app.use(companion.app(uppyOptions))
+// ---------------------------------------------------------------------------
+// Error handling
+// ---------------------------------------------------------------------------
 
 // handle 404
-app.use((req, res, next) => {
-  return res.status(404).json({ message: 'Not Found' })
-})
+app.use((_req, res, _next) => {
+  return res.status(404).json({ message: 'Not Found' });
+});
 
 // handle server errors
-app.use((err, req, res, next) => {
-  console.error('\x1b[31m', err.stack, '\x1b[0m')
-  res.status(err.status || 500).json({ message: err.message, error: err })
-})
+app.use((err, _req, res, _next) => {
+  console.error('\x1b[31m', err.stack, '\x1b[0m');
+  res.status(err.status || 500).json({ message: err.message, error: err });
+});
 
-companion.socket(app.listen(3020), uppyOptions)
+// ---------------------------------------------------------------------------
+// Start server
+// ---------------------------------------------------------------------------
+companion.socket(app.listen(3020), uppyOptions);
 
-console.log(`Listening on ${process.env.SERVER_BASE_URL}`)
+console.log(`Listening on ${process.env.SERVER_BASE_URL}`);
